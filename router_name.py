@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from starlette.staticfiles import StaticFiles as StarletteStaticFiles # للتوافق مع الإصدارات الأقدم
+from starlette.staticfiles import StaticFiles as StarletteStaticFiles
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from datetime import datetime
@@ -71,7 +71,7 @@ def create_connection(data: ConnectionData, db: Session = Depends(get_db)):
         
         # 2. حفظ بيانات الاتصال في قاعدة البيانات (لغرض المحاكاة أو الاستخدام المستقبلي)
         new_connection = MikroTikConnection(
-            name=data.name,
+            router_name=data.name, # <--- التعديل الصحيح: تغيير 'name' إلى 'router_name'
             host=data.host,
             port=data.port,
             username=data.username,

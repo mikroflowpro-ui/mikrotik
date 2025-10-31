@@ -1,7 +1,7 @@
 // بيانات الاتصال الثابتة (لغرض المحاكاة والاختبار)
 // في التطبيق الحقيقي، سيتم جلب الـ ID من قاعدة البيانات بعد تسجيل الدخول
 const MIKROTIK_CONNECTION_ID = 1; 
-const BACKEND_URL = "http://localhost:8000";
+const BACKEND_URL = "https://mikrotik-hkcx.onrender.com";
 
 // ----------------------------------------------------------------------
 // دالة لجلب وعرض موارد النظام الحية (CPU, RAM, Uptime)

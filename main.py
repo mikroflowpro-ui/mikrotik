@@ -29,7 +29,8 @@ app.add_middleware(
 )
 
 # خدمة الملفات الثابتة (Frontend)
-app.mount("/static", StaticFiles(directory="/home/ubuntu/mikrotik_ai_assistant/static"), name="static")
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 
 # ----------------------------------------------------------------------
 # نماذج Pydantic للتحقق من صحة البيانات (Schemas)

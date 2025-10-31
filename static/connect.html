@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إضافة اتصال MikroTik جديد</title>
+    <title>إضافة اتصال Mikrotik جديد</title>
     <link rel="stylesheet" href="style.css">
     <style>
         /* تنسيقات خاصة بنموذج الاتصال */
@@ -31,82 +31,88 @@
             border-radius: 5px;
             box-sizing: border-box;
         }
-        .form-group button {
+        .button {
+            display: block;
             width: 100%;
             padding: 12px;
             background-color: #007bff;
             color: white;
+            text-align: center;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 1.1em;
+            font-size: 16px;
             transition: background-color 0.3s;
         }
-        .form-group button:hover {
+        .button:hover {
             background-color: #0056b3;
         }
-        #message {
+        .message {
             margin-top: 20px;
-            padding: 10px;
+            padding: 15px;
             border-radius: 5px;
             text-align: center;
             font-weight: bold;
         }
-        .success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        .error {
+        .message.error {
             background-color: #f8d7da;
             color: #721c24;
             border: 1px solid #f5c6cb;
         }
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
     </style>
 </head>
 <body>
-    <div class="form-container">
-        <h1>إضافة اتصال MikroTik جديد</h1>
-        <p>أدخل بيانات الاتصال الخاصة بجهاز MikroTik الخاص بك.</p>
-
-        <form id="connection-form">
-            <div class="form-group">
-                <label for="alias">اسم مستعار للراوتر (اختياري)</label>
-                <input type="text" id="alias" name="alias" placeholder="مثل: راوتر الفرع الرئيسي">
-            </div>
-            <div class="form-group">
-                <label for="host">عنوان IP (Host)</label>
-                <input type="text" id="host" name="host" required placeholder="مثال: 192.168.88.1">
-            </div>
-            <div class="form-group">
-                <label for="port">المنفذ (Port)</label>
-                <input type="number" id="port" name="port" value="8728" required>
-            </div>
-            <div class="form-group">
-                <label for="username">اسم المستخدم (Username)</label>
-                <input type="text" id="username" name="username" required placeholder="المستخدم المخصص للـ API">
-            </div>
-            <div class="form-group">
-                <label for="password">كلمة المرور (Password)</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <div class="form-group">
-                <button type="submit">ربط وحفظ الاتصال</button>
-            </div>
-        </form>
-
-        <div id="message"></div>
+    <div class="container">
+        <div class="form-container">
+            <h1>إضافة اتصال Mikrotik جديد</h1>
+            <form id="connection-form">
+                <div class="form-group">
+                    <label for="router-name">اسم مستعار للراوتر (اختياري)</label>
+                    <input type="text" id="router-name" name="name" placeholder="مثال: راوتر المكتب">
+                </div>
+                <div class="form-group">
+                    <label for="host">عنوان IP (Host)</label>
+                    <input type="text" id="host" name="host" required placeholder="مثال: 192.168.88.1">
+                </div>
+                <div class="form-group">
+                    <label for="port">المنفذ (Port)</label>
+                    <input type="number" id="port" name="port" required value="8728" placeholder="المنفذ الافتراضي هو 8728">
+                </div>
+                <div class="form-group">
+                    <label for="username">اسم المستخدم (Username)</label>
+                    <input type="text" id="username" name="username" required placeholder="اسم المستخدم">
+                </div>
+                <div class="form-group">
+                    <label for="password">كلمة المرور (Password)</label>
+                    <input type="password" id="password" name="password" placeholder="كلمة المرور">
+                </div>
+                <button type="submit" class="button">ربط وحفظ الاتصال</button>
+            </form>
+            <div id="message" class="message" style="display: none;"></div>
+        </div>
     </div>
 
     <script>
-        const BACKEND_URL = ""; // استخدام مسار نسبي ليعمل مع النطاق العام
+        // *****************************************************************
+        // ** التعديل المطلوب: تعيين رابط الخادم الصحيح هنا **
+        // *****************************************************************
+        const BACKEND_URL = "https://mikrotik-hkcx.onrender.com"; 
+        // *****************************************************************
+
         const form = document.getElementById('connection-form');
         const messageDiv = document.getElementById('message');
 
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
+
+            messageDiv.style.display = 'block';
             messageDiv.className = '';
-            messageDiv.textContent = 'جاري محاولة الاتصال والحفظ...';
+            messageDiv.textContent = '... جاري محاولة الاتصال والحفظ';
 
             const formData = new FormData(form);
             const data = Object.fromEntries(formData.entries());
@@ -124,16 +130,19 @@
                 const result = await response.json();
 
                 if (response.ok) {
-                    messageDiv.className = 'success';
-                    messageDiv.innerHTML = `تم الربط والحفظ بنجاح! <br> ID الاتصال: ${result.id} <br> يمكنك الآن الذهاب إلى <a href="index.html">لوحة التحكم</a>.`;
+                    messageDiv.className = 'message success';
+                    messageDiv.innerHTML = `تم الربط والحفظ بنجاح! <br> ID الاتصال: ${result.id} <br> يمكنك العودة إلى لوحة التحكم.`;
                     form.reset();
                 } else {
-                    messageDiv.className = 'error';
-                    messageDiv.textContent = `فشل الربط: ${result.detail || 'حدث خطأ غير معروف.'}`;
+                    // إذا كان الخادم قد أرجع خطأ JSON (مثل خطأ تحقق)
+                    const errorMessage = result.detail || JSON.stringify(result);
+                    messageDiv.className = 'message error';
+                    messageDiv.innerHTML = `فشل الاتصال بالخادم: ${errorMessage}`;
                 }
             } catch (error) {
-                messageDiv.className = 'error';
-                messageDiv.textContent = `فشل الاتصال بالخادم: ${error.message}`;
+                // إذا فشل الاتصال بالخادم تمامًا (مثل خطأ CORS أو عدم وجود خادم)
+                messageDiv.className = 'message error';
+                messageDiv.innerHTML = `فشل الاتصال بالخادم: تأكد من أن الخادم يعمل وأن الرابط صحيح. <br> الخطأ: ${error.message}`;
             }
         });
     </script>

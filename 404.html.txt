@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Redirecting...</title>
+  <script>
+    // Get the current path (e.g., /mikrotik/connect)
+    var path = window.location.pathname;
+    // Redirect to the main index.html page
+    window.location.replace(path.replace(/\/mikrotik\/.*/, "/mikrotik/"));
+  </script>
+</head>
+<body>
+  <p>Redirecting to the main page...</p>
+</body>
+</html>

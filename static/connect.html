@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>إضافة اتصال Mikrotik جديد</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../style.css"> <!-- تم تعديل المسار إلى style.css -->
     <style>
-        /* تنسيقات خاصة بنموذج الاتصال */
+        /* ... (تنسيقات CSS كما هي) ... */
         .form-container {
             max-width: 500px;
             margin: 50px auto;
@@ -98,11 +98,8 @@
     </div>
 
     <script>
-        // *****************************************************************
-        // ** التعديل المطلوب: تعيين رابط الخادم الصحيح هنا **
-        // *****************************************************************
+        // التعديل النهائي: رابط الخادم الصحيح
         const BACKEND_URL = "https://mikrotik-hkcx.onrender.com"; 
-        // *****************************************************************
 
         const form = document.getElementById('connection-form');
         const messageDiv = document.getElementById('message');
@@ -134,13 +131,22 @@
                     messageDiv.innerHTML = `تم الربط والحفظ بنجاح! <br> ID الاتصال: ${result.id} <br> يمكنك العودة إلى لوحة التحكم.`;
                     form.reset();
                 } else {
-                    // إذا كان الخادم قد أرجع خطأ JSON (مثل خطأ تحقق)
-                    const errorMessage = result.detail || JSON.stringify(result);
+                    // التعديل النهائي: عرض رسالة الخطأ بشكل صحيح
+                    let errorMessage = "خطأ غير معروف.";
+                    if (result.detail) {
+                        if (Array.isArray(result.detail)) {
+                            errorMessage = result.detail.map(err => `${err.loc.join(' -> ')}: ${err.msg}`).join('<br>');
+                        } else {
+                            errorMessage = result.detail;
+                        }
+                    } else {
+                        errorMessage = JSON.stringify(result);
+                    }
+                    
                     messageDiv.className = 'message error';
                     messageDiv.innerHTML = `فشل الاتصال بالخادم: ${errorMessage}`;
                 }
             } catch (error) {
-                // إذا فشل الاتصال بالخادم تمامًا (مثل خطأ CORS أو عدم وجود خادم)
                 messageDiv.className = 'message error';
                 messageDiv.innerHTML = `فشل الاتصال بالخادم: تأكد من أن الخادم يعمل وأن الرابط صحيح. <br> الخطأ: ${error.message}`;
             }

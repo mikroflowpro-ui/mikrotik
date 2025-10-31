@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إضافة اتصال MikroTik جديد</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* تنسيقات خاصة بنموذج الاتصال */
+        .form-container {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        .form-group button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background-color 0.3s;
+        }
+        .form-group button:hover {
+            background-color: #0056b3;
+        }
+        #message {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>إضافة اتصال MikroTik جديد</h1>
+        <p>أدخل بيانات الاتصال الخاصة بجهاز MikroTik الخاص بك.</p>
+
+        <form id="connection-form">
+            <div class="form-group">
+                <label for="alias">اسم مستعار للراوتر (اختياري)</label>
+                <input type="text" id="alias" name="alias" placeholder="مثل: راوتر الفرع الرئيسي">
+            </div>
+            <div class="form-group">
+                <label for="host">عنوان IP (Host)</label>
+                <input type="text" id="host" name="host" required placeholder="مثال: 192.168.88.1">
+            </div>
+            <div class="form-group">
+                <label for="port">المنفذ (Port)</label>
+                <input type="number" id="port" name="port" value="8728" required>
+            </div>
+            <div class="form-group">
+                <label for="username">اسم المستخدم (Username)</label>
+                <input type="text" id="username" name="username" required placeholder="المستخدم المخصص للـ API">
+            </div>
+            <div class="form-group">
+                <label for="password">كلمة المرور (Password)</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div class="form-group">
+                <button type="submit">ربط وحفظ الاتصال</button>
+            </div>
+        </form>
+
+        <div id="message"></div>
+    </div>
+
+    <script>
+        const BACKEND_URL = ""; // استخدام مسار نسبي ليعمل مع النطاق العام
+        const form = document.getElementById('connection-form');
+        const messageDiv = document.getElementById('message');
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            messageDiv.className = '';
+            messageDiv.textContent = 'جاري محاولة الاتصال والحفظ...';
+
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            data.port = parseInt(data.port); // تحويل المنفذ إلى رقم
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/connections/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    messageDiv.className = 'success';
+                    messageDiv.innerHTML = `تم الربط والحفظ بنجاح! <br> ID الاتصال: ${result.id} <br> يمكنك الآن الذهاب إلى <a href="index.html">لوحة التحكم</a>.`;
+                    form.reset();
+                } else {
+                    messageDiv.className = 'error';
+                    messageDiv.textContent = `فشل الربط: ${result.detail || 'حدث خطأ غير معروف.'}`;
+                }
+            } catch (error) {
+                messageDiv.className = 'error';
+                messageDiv.textContent = `فشل الاتصال بالخادم: ${error.message}`;
+            }
+        });
+    </script>
+</body>
+</html>
